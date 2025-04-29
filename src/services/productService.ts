@@ -1,3 +1,5 @@
+// Is not being used right now
+
 import { Product } from "../models/Product";
 
 const products: Product[] = [
