@@ -1,0 +1,25 @@
+{
+    "name": "coffee-chain",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/server.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "tsc && node dist/server.js",
+        "dev": "nodemon dist/server.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "devDependencies": {
+        "@types/cors": "^2.8.17",
+        "@types/express": "^5.0.1",
+        "nodemon": "^3.1.10",
+        "typescript": "^5.8.3"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^5.1.0"
+    }
+}
