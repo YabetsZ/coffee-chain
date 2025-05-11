@@ -1,7 +1,14 @@
-export interface Product {
+export interface BlockchainBlock {
+    index: number;
     product: CoffeeProduct;
     journey: JourneyStage;
+    hash: string;
+    previous_hash?: string;
+    created_at: string;
+    updated_at: string;
 }
+
+export type UUID = string;
 
 export type StageName =
     | "Farming"
