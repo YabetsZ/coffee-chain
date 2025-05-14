@@ -20,5 +20,17 @@ export const userSchema = z.object({
 
 export const loginSchema = z.object({
     username: z.string(),
+    role: z.enum([
+        "admin",
+        "farmer",
+        "processor",
+        "distributor",
+        "retailer",
+        "consumer",
+    ]),
     password: z.string(),
+});
+
+export const refreshTokenSchema = z.object({
+    refreshToken: z.string().min(1, "Refresh token is required"),
 });

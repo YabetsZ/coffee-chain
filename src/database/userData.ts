@@ -8,7 +8,6 @@ export const addUser = async (user: User) => {
     return user;
 };
 
-// Helper to find a user
 export const findUserByUsername = (username: string) => {
     return users.find((u) => u.name === username);
 };
