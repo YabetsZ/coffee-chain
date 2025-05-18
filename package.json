@@ -19,6 +19,7 @@
         "@types/cors": "^2.8.17",
         "@types/express": "^5.0.1",
         "@types/jsonwebtoken": "^9.0.9",
+        "@types/qrcode": "^1.5.5",
         "eslint": "^9.26.0",
         "globals": "^16.1.0",
         "nodemon": "^3.1.10",
@@ -32,6 +33,7 @@
         "dotenv": "^16.5.0",
         "express": "^5.1.0",
         "jsonwebtoken": "^9.0.2",
+        "qrcode": "^1.5.4",
         "uuid": "^11.1.0",
         "winston": "^3.17.0",
         "zod": "^3.24.4"

@@ -1,6 +1,6 @@
 // Is not being used right now
 
-import { Product } from "../models/Product";
+import { CoffeeProduct, JourneyStage, Product } from "../models/Product";
 import { entireBlockChain } from "./blockchainService";
 
 // Business logic to get all products
@@ -24,4 +24,29 @@ export const getProductByIdService = (
     const chain = entireBlockChain[chainId].getChain();
     return chain.find((product) => product.index === id);
 };
-// TODO: // (Later add more service functions: getProductById, createProduct, etc.)
+
+export const getProductChainService = (
+    chainId: string,
+    id: number
+): {
+    success: boolean;
+    product?: CoffeeProduct;
+    journeys?: JourneyStage[];
+    message?: string;
+    status?: number;
+} => {
+    const chain = entireBlockChain[chainId].getChain();
+    const journeys: JourneyStage[] = [];
+
+    let ptr: number | null = id;
+    while (ptr !== null) {
+        journeys.push(chain[ptr].journey);
+        ptr = chain[ptr].p_index;
+    }
+
+    return {
+        success: true,
+        product: chain[id].product,
+        journeys,
+    };
+};

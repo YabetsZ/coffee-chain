@@ -37,3 +37,13 @@ export const ProductSchema = z.object({
     product: CoffeeProductSchema,
     journey: JourneyStageSchema,
 });
+
+export const addStageToProductSchema = z.object({
+    newStage: JourneyStageSchema,
+    parent: z.number(),
+});
+
+export const getProductChainSchema = z.object({
+    chainId: z.string(),
+    id: z.number(),
+});

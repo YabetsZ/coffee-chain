@@ -5,6 +5,7 @@ import {
     getBlockById,
     verifyChain,
 } from "../controllers/blockchainController";
+import { authenticate } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 

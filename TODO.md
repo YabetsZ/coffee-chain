@@ -21,6 +21,7 @@ A list of immediate tasks and features to be implemented for the Coffee Chain pr
 
 
 ## Enhancements
+- [ ] use json-stable-stringify package for future JSON.stringify()
 
 
 
@@ -34,3 +35,4 @@ A list of immediate tasks and features to be implemented for the Coffee Chain pr
 
 ## Notes
 - [ ] Research third-party APIs for additional features
+- 

@@ -4,15 +4,17 @@ import {
     addProduct,
     addStageToProduct,
     getAllProductsInChain,
+    getProductChain,
 } from "../controllers/productController";
 import { validateProduct } from "../middlewares/validateProduct";
-import { validateJourneyStage } from "../middlewares/validateJourneyStage";
+import { authenticate } from "../middlewares/authMiddleware";
 
 const router = Router();
 
-router.post("/", validateProduct, addProduct);
-router.get("/:chainId", getAllProductsInChain);
-router.post("/:chainId/stage", validateJourneyStage, addStageToProduct);
+router.post("/", authenticate, validateProduct, addProduct);
+router.get("/:chainId", authenticate, getAllProductsInChain);
+router.post("/:chainId/stage", authenticate, addStageToProduct);
 router.get("/:chainId/:id", getProductById);
+router.get("/:chainId/:id/all", getProductChain);
 
 export default router;

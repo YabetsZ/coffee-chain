@@ -1,25 +1,37 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import { AppError } from "./errorMiddleware";
+import { verifyTokenService } from "../services/authService";
+import logger from "../utils/logger";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
-
-export const authenticate = (
+export const authenticate = async (
     req: Request,
     res: Response,
     next: NextFunction
-) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith("Bearer ")) {
-        return res.status(401).json({ error: "Missing token" });
-    }
-
-    const token = authHeader.split(" ")[1];
-
+): Promise<void> => {
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as any;
-        req.user = decoded;
+        // Get token from Authorization header
+        const authHeader = req.headers.authorization;
+        logger.info(`${authHeader}`);
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            throw new AppError("Authentication required", 401);
+        }
+
+        const token = authHeader.split(" ")[1];
+
+        // Verify token
+        const verification = verifyTokenService(token);
+        if (!verification.valid || !verification.user?.name) {
+            throw new AppError("Invalid or expired token", 401);
+        }
+
+        // Add user info to request object
+        req.user = {
+            ...verification.user,
+        };
+
         next();
-    } catch {
-        return res.status(403).json({ error: "Invalid token" });
+    } catch (error) {
+        logger.error(`Failed to authenticate user.`);
+        next(error);
     }
 };

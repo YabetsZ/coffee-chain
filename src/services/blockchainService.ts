@@ -2,16 +2,17 @@ import crypto from "crypto";
 import { v4 as uuidv4 } from "uuid";
 import { CoffeeProduct, JourneyStage, Product } from "../models/Product";
 import { BlockchainBlock } from "../models/blockchain/BlockchainRecord";
+import { generateQrCodeService } from "./qrCodeService";
 
 type UUID = string;
 
 export const entireBlockChain: Record<UUID, BlockchainService> = {};
 
-export const addNewChain = (firstProduct: Product) => {
-    const chainId = uuidv4();
-    const newChain = new BlockchainService(firstProduct);
-    entireBlockChain[chainId] = newChain;
-    return chainId;
+export const addNewChain = async (firstProduct: Product) => {
+    const newChain = new BlockchainService();
+    const response = await newChain.createGenesisBlock(firstProduct, uuidv4());
+    entireBlockChain[newChain.chainId] = newChain;
+    return response;
 };
 
 export const entireBlockChainSummary = () => {
@@ -38,50 +39,77 @@ export const entireBlockChainSummary = () => {
 };
 
 export class BlockchainService {
-    private chain: BlockchainBlock[] = [];
+    private chain: BlockchainBlock[];
+    chainId: string;
 
-    constructor(sack: Product) {
-        this.createGenesisBlock(sack);
+    constructor() {
+        this.chain = [];
+        this.chainId = uuidv4();
     }
 
-    private createGenesisBlock(sack: Product) {
+    async createGenesisBlock(sack: Product, chainId: string) {
+        const generatedQr = await generateQrCodeService(chainId, 0);
         const genesis: BlockchainBlock = {
             index: 0,
+            p_index: null,
             product: sack.product,
             hash: "",
             journey: sack.journey,
             previous_hash: undefined,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
+            qrCode: {
+                dataUrl: generatedQr.imageUrl,
+                qrCodeId: generatedQr.qrId,
+            },
         };
         genesis.hash = this.generateHash(genesis);
         this.chain.push(genesis);
+        return {
+            chainId: this.chainId,
+            id: genesis.index,
+            product: genesis.product,
+            journey: genesis.journey,
+            qrCode: genesis.qrCode,
+        };
     }
 
     private generateHash(data: BlockchainBlock): string {
         const { hash, ...important } = data;
+        // FIXME:use json-stable-stringify package for future
         const blockString = JSON.stringify(important);
 
         return crypto.createHash("sha256").update(blockString).digest("hex");
     }
 
-    public addBlock(pack: JourneyStage) {
+    public async addBlock(pack: JourneyStage, p_index: number) {
         const lastBlock = this.chain[this.chain.length - 1];
+        const generatedQr = await generateQrCodeService(
+            this.chainId,
+            this.chain.length
+        );
         const newBlock: BlockchainBlock = {
             index: this.chain.length,
+            p_index,
             product: lastBlock.product,
             journey: pack,
             hash: "",
             previous_hash: lastBlock.hash,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
+            qrCode: {
+                dataUrl: generatedQr.imageUrl,
+                qrCodeId: generatedQr.qrId,
+            },
         };
         newBlock.hash = this.generateHash(newBlock);
         this.chain.push(newBlock);
         return {
+            chainId: this.chainId,
             id: newBlock.index,
             product: newBlock.product,
             journey: pack,
+            qrCode: newBlock.qrCode,
         };
     }
 

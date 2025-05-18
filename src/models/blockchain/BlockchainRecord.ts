@@ -1,11 +1,16 @@
 export interface BlockchainBlock {
     index: number;
+    p_index: number | null; // this is (stands for parent index :D) an addition to track all the process
     product: CoffeeProduct;
     journey: JourneyStage;
     hash: string;
     previous_hash?: string;
     created_at: string;
     updated_at: string;
+    qrCode: {
+        dataUrl: string; // Base64-encoded QR code image
+        qrCodeId: string; // Optional identifier
+    };
 }
 
 export type UUID = string;

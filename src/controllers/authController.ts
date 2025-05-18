@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import logger from "../utils/logger";
 import {
     loginService,
-    logoutUser,
+    logoutUserService,
     refreshTokenService,
     registerUserService,
 } from "../services/authService";
@@ -111,7 +111,7 @@ export const logout = async (
 
         const { refreshToken } = result.data;
         // Invalidate the refresh token
-        await logoutUser(refreshToken);
+        await logoutUserService(refreshToken);
 
         res.json({
             success: true,

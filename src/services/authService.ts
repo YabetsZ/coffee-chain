@@ -161,7 +161,43 @@ export const refreshTokenService = async (
     }
 };
 
-export const logoutUser = async (token: string) => {
+export const logoutUserService = async (token: string) => {
     logger.info("User logout");
     deleteRefreshToken(token);
+};
+
+export const verifyTokenService = (
+    token: string
+): {
+    valid: boolean;
+    user?: Omit<User, "createdAt" | "password" | "updatedAt">;
+    message?: string;
+    status?: number;
+} => {
+    try {
+        const decoded = jwt.verify(token, String(JWT_SECRET)) as {
+            id: string;
+            name: string;
+        };
+        const user = findUserByUsername(decoded.name);
+        if (!user) {
+            return {
+                valid: false,
+                message: "User no longer exists.",
+                status: 400,
+            };
+        }
+        const { password, createdAt, updatedAt, ...correctForm } = user;
+        return {
+            valid: true,
+            user: correctForm,
+        };
+    } catch (error) {
+        logger.error("Token verification failed:", error);
+        return {
+            valid: false,
+            message: "Invalid or expired token.",
+            status: 400,
+        };
+    }
 };
