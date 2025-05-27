@@ -6,9 +6,8 @@
     "scripts": {
         "build": "tsc",
         "start": "tsc && node dist/server.js",
-        "dev": "nodemon dist/server.js",
-        "lint": "eslint src/**/*.{js,ts,tsx}",
-        "lint:fix": "eslint src/**/*.{js,ts,tsx} --fix"
+        "dev": "nodemon --exec tsx src/server.ts",
+        "start:ts": "tsx src/server.ts"
     },
     "keywords": [],
     "author": "",
@@ -19,10 +18,12 @@
         "@types/cors": "^2.8.17",
         "@types/express": "^5.0.1",
         "@types/jsonwebtoken": "^9.0.9",
+        "@types/pg": "^8.15.2",
         "@types/qrcode": "^1.5.5",
-        "eslint": "^9.26.0",
+        "drizzle-kit": "^0.31.1",
         "globals": "^16.1.0",
         "nodemon": "^3.1.10",
+        "tsx": "^4.19.4",
         "typescript": "^5.8.3",
         "typescript-eslint": "^8.32.0"
     },
@@ -31,8 +32,10 @@
         "coffee-chain": "file:",
         "cors": "^2.8.5",
         "dotenv": "^16.5.0",
+        "drizzle-orm": "^0.43.1",
         "express": "^5.1.0",
         "jsonwebtoken": "^9.0.2",
+        "pg": "^8.16.0",
         "qrcode": "^1.5.4",
         "uuid": "^11.1.0",
         "winston": "^3.17.0",

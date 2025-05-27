@@ -1,7 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { findUserByUsername, users } from "../database/userData";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import logger from "../utils/logger";
 import {
     loginService,
@@ -49,15 +46,13 @@ export const login = async (
         if (!result.success) {
             throw new AppError("Failed to recieve correct input.", 400);
         }
-        const { username, role, password } = result.data;
+        const { username, password } = result.data;
 
-        const recieved = await loginService(username, password, role);
+        const recieved = await loginService(username, password);
         if (!recieved.success)
             throw new AppError(recieved.message!, recieved.status);
 
-        logger.info(
-            `Success to login user named ${username} with role ${role}`
-        );
+        logger.info(`Success to login user named ${username}.`);
         res.json({
             token: recieved.token,
             refreshToken: recieved.refreshToken,

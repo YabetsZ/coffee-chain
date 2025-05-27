@@ -45,5 +45,5 @@ export const addStageToProductSchema = z.object({
 
 export const getProductChainSchema = z.object({
     chainId: z.string(),
-    id: z.number(),
+    id: z.coerce.number(),
 });

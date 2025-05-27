@@ -35,6 +35,15 @@ export const getProductChainService = (
     message?: string;
     status?: number;
 } => {
+    if (
+        !entireBlockChain[chainId] ||
+        id < entireBlockChain[chainId].getChain().length
+    )
+        return {
+            success: false,
+            message: "Couldn't found the chain/product",
+            status: 404,
+        };
     const chain = entireBlockChain[chainId].getChain();
     const journeys: JourneyStage[] = [];
 

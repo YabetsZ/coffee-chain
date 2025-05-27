@@ -11,9 +11,9 @@ import { authenticate } from "../middlewares/authMiddleware";
 
 const router = Router();
 
-router.post("/", authenticate, validateProduct, addProduct);
-router.get("/:chainId", authenticate, getAllProductsInChain);
-router.post("/:chainId/stage", authenticate, addStageToProduct);
+router.post("/", validateProduct, addProduct); // authenticate
+router.get("/:chainId", getAllProductsInChain);
+router.post("/:chainId/stage", addStageToProduct);
 router.get("/:chainId/:id", getProductById);
 router.get("/:chainId/:id/all", getProductChain);
 

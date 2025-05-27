@@ -1,6 +1,7 @@
 export interface User {
-    id: string;
+    // id: string;
     name: string;
+    username: string;
     email: string;
     password: string;
     role:
@@ -11,6 +12,16 @@ export interface User {
         | "retailer"
         | "consumer";
     organization?: string;
-    createdAt: Date;
-    updatedAt?: Date;
+    createdAt: string; // Date
+    updatedAt?: string; // Date
 }
+
+export type userRoles =
+    | "admin"
+    | "farmer"
+    | "processor"
+    | "distributor"
+    | "retailer"
+    | "consumer";
+
+// id, name, email, role, organization, createdAt, updatedAt

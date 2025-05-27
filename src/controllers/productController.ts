@@ -5,7 +5,6 @@ import {
     BlockchainService,
     entireBlockChain,
 } from "../services/blockchainService";
-import { v4 as uuidv4 } from "uuid";
 import logger from "../utils/logger";
 import {
     addStageToProductSchema,
@@ -20,7 +19,7 @@ export const addProduct = async (req: Request, res: Response) => {
     };
     const chainStart = await addNewChain(product);
     logger.info(
-        `New chain created for product ${product.product.id} with chainId (${chainStart.chainId})`
+        `New chain created for a product ${product.product.id} with chainId (${chainStart.chainId})`
     );
     res.status(201).json({ ...chainStart });
 };
@@ -114,7 +113,10 @@ export const getProductChain = (
     try {
         const valid = getProductChainSchema.safeParse(req.params);
         if (!valid.success)
-            throw new AppError("Failed to validate request", 400);
+            throw new AppError(
+                `Failed to validate request: ${valid.error.message}`,
+                400
+            );
         const { chainId, id } = valid.data;
         const result = getProductChainService(chainId, id);
         if (!result.success) throw new AppError(result.message!, result.status);

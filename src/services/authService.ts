@@ -1,4 +1,5 @@
-import { addUser, findUserByUsername, users } from "../database/userData";
+import { addUser, findUserByUsername } from "../database/queries/userData";
+import users from "../database/schema";
 import { User } from "../models/User";
 import logger from "../utils/logger";
 import { v4 as uuidv4 } from "uuid";
@@ -17,38 +18,31 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!;
 
 export const registerUserService = async (
     userData: Omit<User, "id" | "createdAt" | "updatedAt">
-): Promise<User> => {
-    logger.info(`Registering new user: ${userData.name}`);
+) => {
+    logger.info(`Registering new user: ${userData.username}`);
 
     // Check if user already exists
-    const existingUser = findUserByUsername(userData.name);
+    const existingUser = await findUserByUsername(userData.username);
     if (existingUser) {
         throw new AppError("User with this username already exists", 400);
     }
 
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     const { password: _, ...others } = userData;
-    // Create new user
-    const newUser: User = {
-        id: uuidv4(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+
+    const registeredUser = await addUser({
         password: hashedPassword,
         ...others,
-    };
-
-    // Store user
-    addUser(newUser);
+    });
 
     // Return user (excluding password)
-    const { password, ...userWithoutPassword } = newUser;
-    return userWithoutPassword as User;
+    const { password, ...userWithoutPassword } = registeredUser;
+    return userWithoutPassword;
 };
 
 export const loginService = async (
     username: string,
-    password: string,
-    role: string
+    password: string
 ): Promise<{
     success: boolean;
     token?: string;
@@ -57,13 +51,9 @@ export const loginService = async (
     status?: number;
 }> => {
     try {
-        const user = findUserByUsername(username);
+        const user = await findUserByUsername(username);
 
-        if (
-            !user ||
-            !(await bcrypt.compare(password, user.password)) ||
-            user.role !== role
-        ) {
+        if (!user || !(await bcrypt.compare(password, user.password))) {
             return {
                 success: false,
                 message: "Invalid credentials",
@@ -73,14 +63,14 @@ export const loginService = async (
 
         // id, username and role
         const accessToken = jwt.sign(
-            { id: user.id, name: username },
+            { id: user.id, username, role: user.role },
             String(JWT_SECRET),
             {
                 expiresIn: "15m",
             }
         );
         const refreshToken = jwt.sign(
-            { id: user.id, name: username },
+            { id: user.id, username, role: user.role },
             String(JWT_REFRESH_SECRET),
             {
                 expiresIn: "7d",
@@ -120,17 +110,18 @@ export const refreshTokenService = async (
             String(JWT_REFRESH_SECRET)
         ) as {
             id: string;
-            name: string;
+            username: string;
+            role: string;
         };
 
-        const user = findUserByUsername(payload.name);
+        const user = await findUserByUsername(payload.username);
         if (!user) {
             return { success: false, message: "User no longer exists." };
         }
 
         // console.log("here 1");
         const newToken = jwt.sign(
-            { id: user.id, name: user.name, role: user.role },
+            { id: user.id, username: user.username, role: user.role },
             String(JWT_SECRET),
             { expiresIn: "15m" }
         );
@@ -138,7 +129,7 @@ export const refreshTokenService = async (
         // console.log("here 2");
         // Generate new refresh token
         const newRefreshToken = jwt.sign(
-            { id: user.id, name: user.name, role: user.role },
+            { id: user.id, username: user.username, role: user.role },
             String(JWT_REFRESH_SECRET),
             { expiresIn: "7d" }
         );
@@ -166,20 +157,20 @@ export const logoutUserService = async (token: string) => {
     deleteRefreshToken(token);
 };
 
-export const verifyTokenService = (
+export const verifyTokenService = async (
     token: string
-): {
+): Promise<{
     valid: boolean;
     user?: Omit<User, "createdAt" | "password" | "updatedAt">;
     message?: string;
     status?: number;
-} => {
+}> => {
     try {
         const decoded = jwt.verify(token, String(JWT_SECRET)) as {
             id: string;
             name: string;
         };
-        const user = findUserByUsername(decoded.name);
+        const user = await findUserByUsername(decoded.name);
         if (!user) {
             return {
                 valid: false,
@@ -190,7 +181,10 @@ export const verifyTokenService = (
         const { password, createdAt, updatedAt, ...correctForm } = user;
         return {
             valid: true,
-            user: correctForm,
+            user: correctForm as Omit<
+                User,
+                "createdAt" | "password" | "updatedAt"
+            >,
         };
     } catch (error) {
         logger.error("Token verification failed:", error);
