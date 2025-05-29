@@ -21,11 +21,11 @@ export interface JourneyStage {
     date_completed: string;
     price_after_stage: number;
     status: "Pending" | "Completed";
-    details?: Record<string, string>;
+    details?: Record<string, string | number>;
 }
 
 export interface CoffeeProduct {
-    id: string;
+    // id: string;
     name: string;
     description: string;
     origin: string;

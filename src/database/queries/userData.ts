@@ -40,9 +40,7 @@ export const findUserByUsername = async (username: string) => {
         }
         return result[0];
     } catch (err: any) {
-        if (err! instanceof AppError)
-            throw new AppError(err.message || "Unexpected DB error", 500);
-        throw err;
+        throw new AppError(err.message || "Unexpected DB error", 500);
     }
 };
 

@@ -11,7 +11,7 @@ export interface User {
         | "distributor"
         | "retailer"
         | "consumer";
-    organization?: string;
+    organization: string;
     createdAt: string; // Date
     updatedAt?: string; // Date
 }

@@ -1,52 +1,112 @@
+# ☕️ CoffeeChain Backend System
 
+## Overview
 
-## ☕️ CoffeeChain — Fairness & Transparency in Every Cup
-
-### Mission
-
-**CoffeeChain** is a transparency-focused web app that empowers farmers, businesses, and consumers by revealing the full journey of a coffee product — from farm to cup.  
-We aim to make the coffee supply chain **fairer, traceable, and more accountable**, by tracking every stage of production and showing **how the price evolves** along the way.
+CoffeeChain is a backend system designed to provide API endpoints for tracking the journey of coffee products from farm to cup. This project leverages a blockchain-inspired architecture to ensure transparency, traceability, and fairness in the coffee supply chain. The backend serves as the foundation for the CoffeeChain platform, enabling farmers, companies, and consumers to interact with immutable data about coffee products and their production stages.
 
 ---
 
-### What Problem Are We Solving?
+## Features
 
-In today’s global coffee trade:
-
-- 🧑‍🌾 **Farmers are underpaid** despite rising coffee prices.
-- 🔍 **Supply chains lack visibility**, allowing for fraud, greenwashing, and unfair pricing.
-- 🏷️ **Consumers can’t verify** origin, practices, or ethical claims.
-- 🏢 **Companies struggle** to prove sourcing integrity or analyze supply chain margins.
-
----
-
-### Our Solution
-
-CoffeeChain delivers a blockchain-inspired platform to:
-
-- ✅ **Track each production stage** (farming, drying, roasting, packaging, retail, etc.)
-- 💰 **Record price data at each stage** to show who earns what
-- 🌍 **Display origin, company, process & location data** per stage
-- 🔐 **Secure data immutably** in a mock blockchain to prevent tampering
-- 📦 **Generate scannable QR codes** that reveal the full coffee journey
-- 📊 **Enable insights** for fair pricing, supply efficiency, and brand trust
+- **API Endpoints**:
+  - Retrieve blockchain data for coffee products.
+  - Verify the integrity of blockchain chains.
+  - Add new coffee products and production stages.
+  - Generate scannable QR codes for product verification.
+- **Blockchain Layer**:
+  - Simulated private blockchain for immutability and audit trail.
+  - Tracks production stages such as farming, harvesting, roasting, packaging, and retail.
+- **Data Security**:
+  - Ensures tamper-proof data storage using cryptographic hashing.
+- **Logging**:
+  - Comprehensive logging system using Winston for debugging and monitoring.
+- **Validation**:
+  - Input validation using Zod schemas for robust API requests.
 
 ---
 
-### Who It’s For
+## API Documentation
 
-- **Farmers** — to gain visibility and secure fair pricing
-- **Companies** — to prove ethical sourcing and improve operations
-- **Consumers** — to trace the story behind every cup
-- **Regulators & NGOs** — to audit and advocate for ethical trade
+### Base URL
+`http://localhost:5000/api`
+
+
+## Tech Stack
+
+- **Backend**: Node.js + Express
+- **Blockchain Layer**: Simulated private blockchain
+- **Validation**: Zod for schema validation
+- **Logging**: Winston for logging
+- **QR Integration**: QR code generation for product verification
+- **Database**: 
 
 ---
 
-### Tech Stack (Planned)
-- **Frontend**: React + TypeScript  
-- **Backend**: Node.js + Express (API-first design)  
-- **Blockchain Layer**: Simulated private chain (for immutability and audit trail)  
-- **Database**: Simulated until final stage  
-- **QR Integration**: QR scanner + product verification API  
+## Installation
 
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
 
+### Steps
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/coffee-chain.git
+   ```
+2. Navigate to the project directory:
+    ```bash
+    cd coffee-chain
+    ```
+3. Install dependencies:
+    ```bash
+    npm install
+    ```
+4. Create a .env file and configure environment variables:
+    ```
+    PORT=5000
+    NODE_ENV=development
+    ```
+5. Start the development server:
+    ```bash
+    npm run dev
+    ```
+
+### Scripts
+```bash
+npm run build # Compile TypeScript files into JavaScript.
+npm run start # Build and start the server.
+npm run dev # Start the server in development mode using nodemon.
+```
+## Project Structure
+```bash
+src/
+├── controllers/       # API controllers
+├── database/          # Database connection and queries
+├── models/            # TypeScript models for blockchain and products
+├── routes/            # API route definitions
+├── schemas/           # Zod schemas for validation
+├── services/          # Business logic and blockchain services
+├── utils/             # Utility functions (e.g., logger)
+├── middlewares/       # Custom middleware (e.g., error handling)
+├── server.ts          # Entry point for the backend
+```
+Logging
+The project uses Winston for logging. Logs are stored in the logs/ directory:
+
+combined.log - All logs.
+error.log - Error logs only.
+Validation
+All incoming requests are validated using Zod schemas to ensure data integrity. Example schemas include:
+
+* CoffeeProductSchema - Validates coffee product data.
+* JourneyStageSchema - Validates production stage data.
+  
+
+## Contributors
+* Yabets Zekaryas 
+
+## Contact
+For questions or support, please contact:
+
+* Email: yabetszekaryas07@gmail.com
+* GitHub: CoffeeChain Repository

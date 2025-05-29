@@ -2,7 +2,7 @@ import { Router } from "express";
 import productRoutes from "./productRoutes";
 import blockchainRoutes from "./blockchainRoutes";
 import authRoutes from "./authRoutes";
-import userRoutes from "./userRoutes";
+import adminRoutes from "./adminRoutes";
 
 let router = Router();
 
@@ -19,6 +19,6 @@ router.get("/api", (_req, res) => {
 router.use("/api/products", productRoutes);
 router.use("/api/blockchain", blockchainRoutes);
 router.use("/api/auth", authRoutes);
-router.use("/api/users", userRoutes);
+router.use("/api/admin", adminRoutes);
 
 export default router;

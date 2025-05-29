@@ -20,6 +20,8 @@
         "@types/jsonwebtoken": "^9.0.9",
         "@types/pg": "^8.15.2",
         "@types/qrcode": "^1.5.5",
+        "@types/swagger-jsdoc": "^6.0.4",
+        "@types/swagger-ui-express": "^4.1.8",
         "drizzle-kit": "^0.31.1",
         "globals": "^16.1.0",
         "nodemon": "^3.1.10",
@@ -37,6 +39,8 @@
         "jsonwebtoken": "^9.0.2",
         "pg": "^8.16.0",
         "qrcode": "^1.5.4",
+        "swagger-jsdoc": "^6.2.8",
+        "swagger-ui-express": "^5.0.1",
         "uuid": "^11.1.0",
         "winston": "^3.17.0",
         "zod": "^3.24.4"

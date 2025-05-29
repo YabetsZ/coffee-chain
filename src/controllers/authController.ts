@@ -53,7 +53,7 @@ export const login = async (
             throw new AppError(recieved.message!, recieved.status);
 
         logger.info(`Success to login user named ${username}.`);
-        res.json({
+        res.status(200).json({
             token: recieved.token,
             refreshToken: recieved.refreshToken,
         });

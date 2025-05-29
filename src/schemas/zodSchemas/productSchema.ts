@@ -19,11 +19,11 @@ export const JourneyStageSchema = z.object({
     date_completed: z.string(),
     price_after_stage: z.number(),
     status: z.enum(["Pending", "Completed"]),
-    details: z.record(z.string()).optional(),
+    details: z.record(z.string(), z.union([z.string(), z.number()])).optional(),
 });
 
 export const CoffeeProductSchema = z.object({
-    id: z.string(),
+    // id: z.string(),
     name: z.string(),
     description: z.string(),
     origin: z.string(),

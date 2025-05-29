@@ -9,7 +9,7 @@ import { authenticate } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
-router.get("/", getAllBlocks);
+router.get("/", authenticate, getAllBlocks);
 router.get("/:chainId", getAllProductsInChain);
 router.get("/:chainId/:blockId", getBlockById);
 router.get("/verify/chain/:chainId", verifyChain);

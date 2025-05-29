@@ -1,14 +1,35 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import {
     entireBlockChain,
     entireBlockChainSummary,
 } from "../services/blockchainService";
 import logger from "../utils/logger";
 import { CoffeeProduct, JourneyStage } from "../models/Product";
+import { AppError } from "../middlewares/errorMiddleware";
 
-export const getAllBlocks = (req: Request, res: Response): any => {
-    logger.info(`The information of entire block chain have been provided.`);
-    return res.json(entireBlockChainSummary());
+export const getAllBlocks = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): any => {
+    try {
+        // if (!req.user || req.user.role !== "admin")
+        //     throw new AppError(
+        //         "Unauthorized access of admin's previledge",
+        //         401
+        //     );
+        logger.info(
+            `The information of entire block chain have been provided.`
+        );
+        return res.json(entireBlockChainSummary());
+    } catch (err) {
+        logger.error(
+            `User named ${
+                req.user?.role || "Unknown"
+            } tried to access entire block chain.`
+        );
+        next(err);
+    }
 };
 
 // the same as its product counterpart !!!

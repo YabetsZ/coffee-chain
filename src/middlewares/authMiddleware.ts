@@ -19,7 +19,7 @@ export const authenticate = async (
         const token = authHeader.split(" ")[1];
 
         // Verify token
-        const verification = verifyTokenService(token);
+        const verification = await verifyTokenService(token);
         if (!verification.valid || !verification.user?.name) {
             throw new AppError("Invalid or expired token", 401);
         }

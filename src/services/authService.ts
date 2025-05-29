@@ -19,25 +19,28 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!;
 export const registerUserService = async (
     userData: Omit<User, "id" | "createdAt" | "updatedAt">
 ) => {
-    logger.info(`Registering new user: ${userData.username}`);
+    try {
+        logger.info(`Registering new user: ${userData.username}`);
+        // Check if user already exists
+        const existingUser = await findUserByUsername(userData.username);
+        if (existingUser) {
+            throw new AppError("User with this username already exists", 400);
+        }
 
-    // Check if user already exists
-    const existingUser = await findUserByUsername(userData.username);
-    if (existingUser) {
-        throw new AppError("User with this username already exists", 400);
+        const hashedPassword = await bcrypt.hash(userData.password, 10);
+        const { password: _, ...others } = userData;
+
+        const registeredUser = await addUser({
+            password: hashedPassword,
+            ...others,
+        });
+
+        // Return user (excluding password)
+        const { password, ...userWithoutPassword } = registeredUser;
+        return userWithoutPassword;
+    } catch (error) {
+        throw error;
     }
-
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const { password: _, ...others } = userData;
-
-    const registeredUser = await addUser({
-        password: hashedPassword,
-        ...others,
-    });
-
-    // Return user (excluding password)
-    const { password, ...userWithoutPassword } = registeredUser;
-    return userWithoutPassword;
 };
 
 export const loginService = async (
@@ -168,9 +171,10 @@ export const verifyTokenService = async (
     try {
         const decoded = jwt.verify(token, String(JWT_SECRET)) as {
             id: string;
-            name: string;
+            username: string;
+            role: string;
         };
-        const user = await findUserByUsername(decoded.name);
+        const user = await findUserByUsername(decoded.username);
         if (!user) {
             return {
                 valid: false,

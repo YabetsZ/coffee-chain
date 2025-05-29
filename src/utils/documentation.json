@@ -1,0 +1,392 @@
+{
+    "openapi": "3.0.0",
+
+    "info": {
+        "title": "CoffeeChain API",
+        "description": "**CoffeeChain** is a backend system designed to provide API endpoints for tracking the journey of coffee products from *farm to cup*. This project leverages a blockchain-inspired architecture to ensure transparency, traceability, and fairness in the coffee supply chain. The backend serves as the foundation for the CoffeeChain platform, enabling farmers, companies, and consumers to interact with immutable data about coffee products and their production stages.",
+        "version": "1.0.0",
+        "termsOfService": "[http://example.com/terms/](http://example.com/terms/)",
+        "contact": {
+            "name": "Yabets Zekaryas",
+            "url": "https://yabetsz.github.io/portfolio/",
+            "email": "yabetszekaryas07@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "[http://www.apache.org/licenses/LICENSE-2.0.html](http://www.apache.org/licenses/LICENSE-2.0.html)"
+        }
+    },
+
+    "servers": [
+        {
+            "url": "http://localhost:5000/api",
+            "description": "Local development server"
+        }
+    ],
+
+    "paths": {
+        "/auth/register": {
+            "post": {
+                "summary": "Register a new user",
+                "description": "Registers a new user[company] to the system the user sometimes is an admin added by the superadmin",
+                "tags": ["Admin's"],
+                "operationId": "registerUser",
+                "requestBody": {
+                    "description": "User/Admin information for registeration",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NewUserInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserCreationSuccess"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "examples": {
+                                    "Invalid Input": {
+                                        "value": {
+                                            "success": false,
+                                            "message": "Failed to receive correct input."
+                                        }
+                                    },
+                                    "Username Exists": {
+                                        "value": {
+                                            "success": false,
+                                            "message": "User with this username already exists"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Unexpected DB error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "summary": "Log in user/admin",
+                "description": "handles log in request from users and admins",
+                "tags": ["User's"],
+                "operationId": "loginUser",
+                "requestBody": {
+                    "description": "User/Admin information for log in",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successfully accepted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/jsonwebtoken"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed to recieve correct input",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Unexpected server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/:chainId/:id/all": {
+            "get": {
+                "summary": "Get full journey of a product",
+                "tags": ["User's"],
+                "parameters": [
+                    {
+                        "name": "chainId",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "string", "format": "uuid" }
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful request for the full journey of a product",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "product": {
+                                            "$ref": "#/components/schemas/CoffeeProduct"
+                                        },
+                                        "journeys": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/JourneyStage"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Failed to validate request input"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Request for unregistered product"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+
+    "components": {
+        "schemas": {
+            "RoleEnum": {
+                "type": "string",
+                "enum": [
+                    "admin",
+                    "farmer",
+                    "processor",
+                    "distributor",
+                    "retailer",
+                    "consumer"
+                ]
+            },
+            "LoginInput": {
+                "type": "object",
+                "required": ["username", "password"],
+                "properties": {
+                    "username": { "type": "string" },
+                    "password": { "type": "string" }
+                }
+            },
+            "NewUserInput": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "username",
+                    "email",
+                    "password",
+                    "role",
+                    "organization"
+                ],
+                "allOf": [
+                    { "$ref": "#/components/schemas/LoginInput" },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "name": { "type": "string" },
+
+                            "email": { "type": "string", "format": "email" },
+
+                            "role": { "$ref": "#/components/schemas/RoleEnum" },
+                            "organization": { "type": "string" }
+                        }
+                    }
+                ]
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string", "format": "uuid" },
+                    "name": { "type": "string" },
+                    "username": { "type": "string" },
+                    "email": { "type": "string", "format": "email" },
+                    "role": { "$ref": "#/components/schemas/RoleEnum" },
+                    "organization": { "type": "string" },
+                    "createdAt": { "type": "string", "format": "date-time" },
+                    "updatedAt": { "type": "string", "format": "date-time" }
+                }
+            },
+            "jsonwebtoken": {
+                "type": "object",
+                "properties": {
+                    "token": { "type": "string" },
+                    "refreshToken": { "type": "string" }
+                }
+            },
+            "UserCreationSuccess": {
+                "type": "object",
+                "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "newUser": { "$ref": "#/components/schemas/User" }
+                        }
+                    }
+                }
+            },
+            "StageName": {
+                "type": "string",
+                "enum": [
+                    "Farming",
+                    "Harvesting",
+                    "Processing",
+                    "Drying",
+                    "Grinding",
+                    "Roasting",
+                    "Packaging",
+                    "Distribution",
+                    "Retail"
+                ]
+            },
+            "JourneyStage": {
+                "type": "object",
+                "required": [
+                    "stage",
+                    "company",
+                    "location",
+                    "date_completed",
+                    "price_after_stage",
+                    "status"
+                ],
+                "properties": {
+                    "stage": { "$ref": "#/components/schemas/StageName" },
+                    "company": { "type": "string" },
+                    "location": { "type": "string" },
+                    "date_completed": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "price_after_stage": { "type": "number" },
+                    "status": {
+                        "type": "string",
+                        "enum": ["Pending", "Completed"]
+                    },
+                    "details": {
+                        "type": "object",
+                        "additionalProperties": { "type": "string" }
+                    }
+                }
+            },
+            "CoffeeProduct": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "origin",
+                    "altitude",
+                    "bean_type",
+                    "harvest_year",
+                    "hash_tags"
+                ],
+                "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "description": { "type": "string" },
+                    "origin": { "type": "string" },
+                    "altitude": { "type": "number" },
+                    "bean_type": { "type": "string" },
+                    "harvest_year": { "type": "integer" },
+                    "hash_tags": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                    }
+                }
+            },
+            "ErrorResponse": {
+                "type": "object",
+                "required": ["success", "message"],
+                "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                }
+            }
+        }
+    }
+}

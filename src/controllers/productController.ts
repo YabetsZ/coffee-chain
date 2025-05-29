@@ -19,7 +19,7 @@ export const addProduct = async (req: Request, res: Response) => {
     };
     const chainStart = await addNewChain(product);
     logger.info(
-        `New chain created for a product ${product.product.id} with chainId (${chainStart.chainId})`
+        `New chain created for a product ${chainStart.id} with chainId (${chainStart.chainId})`
     );
     res.status(201).json({ ...chainStart });
 };
@@ -42,7 +42,7 @@ export const addStageToProduct = async (
         const validationResult = addStageToProductSchema.safeParse(req.body);
         if (!validationResult.success)
             throw new AppError(
-                `validating for adding stages to a product failed, error: ${validationResult.error}`,
+                `validating for adding stages to a product failed, error: ${validationResult.error.message}`,
                 400
             );
         const { newStage: stage, parent } = validationResult.data; // parent refers to the place(index for now) of it's parent
@@ -120,7 +120,11 @@ export const getProductChain = (
         const { chainId, id } = valid.data;
         const result = getProductChainService(chainId, id);
         if (!result.success) throw new AppError(result.message!, result.status);
-        res.json({ product: result.product, journey: result.journeys });
+        res.json({
+            success: true,
+            product: result.product,
+            journey: result.journeys,
+        });
     } catch (err) {
         logger.error(`Failed to get product's chain.`);
         next(err);

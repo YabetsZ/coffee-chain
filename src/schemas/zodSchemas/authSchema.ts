@@ -14,7 +14,7 @@ export const userSchema = z.object({
         "retailer",
         "consumer",
     ]),
-    organization: z.string().optional(),
+    organization: z.string(),
     // createdAt: z.coerce.date().optional(),
     // updatedAt: z.coerce.date().optional(),
 });

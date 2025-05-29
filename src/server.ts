@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/errorMiddleware";
 import routes from "./routes";
 import logger from "./utils/logger";
+import swaggerUi from "swagger-ui-express";
+import fs from "fs";
+import path from "path";
 
 dotenv.config();
 
@@ -13,6 +16,11 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+const openApiDocument = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "./utils/documentation.json"), "utf-8")
+);
+
+app.use("/api/apiDoc", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 app.use(routes);
 app.use(errorHandler);
 

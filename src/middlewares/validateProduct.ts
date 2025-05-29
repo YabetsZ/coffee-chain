@@ -10,7 +10,7 @@ export const validateProduct = (
     const result = ProductSchema.safeParse(req.body);
     if (!result.success) {
         logger.error(
-            `The validation for product failed with error message: ${result.error.issues}`
+            `The validation for product failed with error message: ${result.error.message}`
         );
         res.status(400).json({ error: result.error.flatten() });
         return;
