@@ -3,6 +3,8 @@
 ## Overview
 
 CoffeeChain is a backend system designed to provide API endpoints for tracking the journey of coffee products from farm to cup. This project leverages a blockchain-inspired architecture to ensure transparency, traceability, and fairness in the coffee supply chain. The backend serves as the foundation for the CoffeeChain platform, enabling farmers, companies, and consumers to interact with immutable data about coffee products and their production stages.
+- Mobile app that uses it can be found [here](https://github.com/yaftes/coffee-chain)
+- Web app that uses it can be found [here](https://github.com/yabets143/Coffeechain)
 
 ---
 
